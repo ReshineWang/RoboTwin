@@ -1,7 +1,7 @@
 aloha_maniskill_sim/
 models/
-data/*
-!data/instructions
+data/
+calvin_Robotwin/
 __pycache__/
 **/.DS_Store/
 policy/3D-Diffusion-Policy/3D-Diffusion-Policy/data/

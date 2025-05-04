@@ -1,0 +1,12 @@
+Timestamp: 2024-12-26 00:47:11
+
+Checkpoint Num: 2000
+Successful Rate of Diffenent checkpoints:
+0.49
+
+TopK 1 Success Rate (every):
+0.49
+
+TopK 1 Success Rate:
+0.49
+
