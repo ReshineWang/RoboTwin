@@ -17,7 +17,10 @@ from collections import deque
 sys.path.append("./")
 sys.path.append(f"./policy")
 sys.path.append("./description/utils")
-from envs._GLOBAL_CONFIGS import CONFIGS_PATH
+# from envs._GLOBAL_CONFIGS import CONFIGS_PATH
+
+REPO_ROOT = Path(__file__).resolve().parent.parent  # 根据你的脚本位置调整层级
+CONFIGS_PATH = str(REPO_ROOT / "task_config" / "")
 
 import numpy as np
 from typing import Any
@@ -160,7 +163,16 @@ class ModelServer:
                         raise AttributeError(f"No model method named '{cmd}'")
 
                     # Call method with or without obs
-                    result = method(obs) if obs is not None else method()
+                    # 传入的参数需要解包
+                    if obs is None:
+                        result = method()
+                    elif isinstance(obs, dict):
+                        result = method(**obs)
+                    elif isinstance(obs, (list, tuple)):
+                        result = method(*obs)
+                    else:
+                        result = method(obs)
+
                     response = {"res": result}
 
                     # Serialize response and send back with length header
@@ -173,8 +185,9 @@ class ModelServer:
                     break
                 except Exception as e:
                     err = f"Error handling request: {e}"
-                    print(f"⚠️ {err}")
                     tb = traceback.format_exc()
+                    # 在服务器端打印完整 traceback，便于定位维度错误等问题
+                    print(f"⚠️ {err}\n{tb}")
                     error_resp = numpy_to_json({"error": err, "traceback": tb}).encode('utf-8')
                     client_socket.sendall(len(error_resp).to_bytes(4, 'big'))
                     client_socket.sendall(error_resp)
@@ -220,6 +233,38 @@ def main(usr_args):
     # Extract basic arguments
     policy_name = usr_args['policy_name']
     port = usr_args.get('port')
+
+        # ==== load task config ====
+    task_config = usr_args["task_config"]
+    with open(f"./task_config/{task_config}.yml", "r", encoding="utf-8") as f:
+        args = yaml.safe_load(f)
+
+    embodiment_type = args["embodiment"]
+
+    # ==== load embodiment_global_config ====
+    embodiment_config_path = os.path.join(CONFIGS_PATH, "_embodiment_config.yml")
+    with open(embodiment_config_path, "r", encoding="utf-8") as f:
+        embodiment_table = yaml.safe_load(f)
+
+    def get_embodiment_file(name):
+        return embodiment_table[name]["file_path"]
+
+    # ==== pick left/right robot ====
+    if len(embodiment_type) == 1:
+        args["left_robot_file"] = get_embodiment_file(embodiment_type[0])
+        args["right_robot_file"] = get_embodiment_file(embodiment_type[0])
+    else:
+        args["left_robot_file"] = get_embodiment_file(embodiment_type[0])
+        args["right_robot_file"] = get_embodiment_file(embodiment_type[1])
+
+    # ==== load robot configs ====
+    args["left_embodiment_config"] = get_embodiment_config(args["left_robot_file"])
+    args["right_embodiment_config"] = get_embodiment_config(args["right_robot_file"])
+
+    # ==== compute dims ====
+    usr_args["left_arm_dim"] = len(args["left_embodiment_config"]["arm_joints_name"][0])
+    usr_args["right_arm_dim"] = len(args["right_embodiment_config"]["arm_joints_name"][1])
+
 
     # Instantiate model
     get_model = eval_function_decorator(policy_name, 'get_model')

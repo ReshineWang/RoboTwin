@@ -14,6 +14,9 @@ task_config/
 # eval result
 eval_result/
 
+# generated data
+policy/pi0/training_data/*
+policy/GO1/processed_data/*
 # Code Generation
 assets/*
 !assets/_download.py

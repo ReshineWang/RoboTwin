@@ -80,3 +80,9 @@ class PI0:
         self.instruction = None
         self.observation_window = None
         print("successfully unset obs and language intruction")
+    
+    def get_observation_window(self):
+        return self.observation_window
+    
+    def get_pi0_step(self):
+        return self.pi0_step

@@ -1,6 +1,6 @@
 import os
 
-mode = os.environ.get("DP_MODE", "single").lower()
+mode = os.environ.get("GEACT_MODE", "single").lower()
 
 if mode == "double":
     # 双环境版本：导出 get_model/eval/reset_model 等

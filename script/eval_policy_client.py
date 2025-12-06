@@ -240,7 +240,7 @@ def main(usr_args):
 
     policy_conda_env = usr_args.get("policy_conda_env", None)
 
-    get_model = eval_function_decorator(policy_name, "get_model", conda_env=policy_conda_env)
+    # get_model = eval_function_decorator(policy_name, "get_model", conda_env=policy_conda_env)
 
     with open(f"./task_config/{task_config}.yml", "r", encoding="utf-8") as f:
         args = yaml.load(f.read(), Loader=yaml.FullLoader)
@@ -377,6 +377,7 @@ def eval_policy(task_name,
 
     policy_name = args["policy_name"]
     eval_func = eval_function_decorator(policy_name, "eval", conda_env=policy_conda_env)
+    reset_func = eval_function_decorator(policy_name, "reset_model", conda_env=policy_conda_env)
 
     now_seed = st_seed
     task_total_reward = 0
@@ -458,7 +459,9 @@ def eval_policy(task_name,
             TASK_ENV._set_eval_video_ffmpeg(ffmpeg)
 
         succ = False
-        model.call(func_name='reset_model')
+        # model.call(func_name='reset_model')
+        reset_func(model)
+
         while TASK_ENV.take_action_cnt < TASK_ENV.step_lim:
             observation = TASK_ENV.get_obs()
             eval_func(TASK_ENV, model, observation)

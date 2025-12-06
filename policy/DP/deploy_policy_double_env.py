@@ -34,3 +34,6 @@ def eval(TASK_ENV, model, observation):
         observation = TASK_ENV.get_obs()
         obs = encode_obs(observation)
         model.call(func_name='update_obs', obs=obs)
+
+def reset_model(model):
+    model.call(func_name='reset_obs')
