@@ -11,6 +11,8 @@ gpu_id=${6}
 policy_conda_env=${7}
 
 export CUDA_VISIBLE_DEVICES=${gpu_id}
+export GEACT_MODE=double # 控制双环境推理
+
 echo -e "\033[33mgpu id (to use): ${gpu_id}\033[0m"
 
 cd ../..
