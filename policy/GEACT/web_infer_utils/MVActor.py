@@ -218,7 +218,7 @@ class MVActor:
         return the raw action
         """
         print(">>>>>>>>execution_step: ", execution_step)
-        assert execution_step >= 1 and execution_step <= 100, "execution_step should be in [1, 100]"
+        assert execution_step >= 1 and execution_step <= 200, "execution_step should be in [1, 200]"
 
 
         if obs.dtype == np.uint8:

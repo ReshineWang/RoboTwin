@@ -462,8 +462,29 @@ class Base_Task(gym.Env):
         # actor_segmentation
         if self.data_type.get("actor_segmentation", False):
             actor_segmentation = self.cameras.get_segmentation(level="actor")
+            
+            # --- Get Robot Mask ---
+            raw_actor_segmentation = self.cameras.get_raw_segmentation(level="actor")
+            
+            # Get IDs for left and right arm links dynamically
+            # For Sapien 3, links are components attached to entities. We need the entity's per_scene_id.
+            left_ids = [link.entity.per_scene_id for link in self.robot.left_entity.get_links()]
+            right_ids = [link.entity.per_scene_id for link in self.robot.right_entity.get_links()]
+
             for camera_name in actor_segmentation.keys():
                 pkl_dic["observation"][camera_name].update(actor_segmentation[camera_name])
+                
+                # Compute mask if raw segmentation is available
+                if camera_name in raw_actor_segmentation:
+                    raw_seg = raw_actor_segmentation[camera_name]["actor_segmentation"]
+                    
+                    # Generate boolean masks and convert to uint8 (0 or 255)
+                    left_mask = np.isin(raw_seg, left_ids).astype(np.uint8) * 255
+                    right_mask = np.isin(raw_seg, right_ids).astype(np.uint8) * 255
+                    
+                    pkl_dic["observation"][camera_name]["left_arm_mask"] = left_mask
+                    pkl_dic["observation"][camera_name]["right_arm_mask"] = right_mask
+            # ----------------------
         # depth
         if self.data_type.get("depth", False):
             depth = self.cameras.get_depth()

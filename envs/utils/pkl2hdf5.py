@@ -83,6 +83,25 @@ def pkl_files_to_hdf5_and_video(pkl_files, hdf5_path, video_path):
 
     images_to_video(np.array(data_list["observation"]["head_camera"]["rgb"]), out_path=video_path)
 
+    # # Save arm mask videos if available (left_arm_mask, right_arm_mask)
+    # # These were computed in _base_task.py and saved into observation/head_camera
+    # for arm in ["left", "right"]:
+    #     mask_key = f"{arm}_arm_mask"
+    #     try:
+    #         if mask_key in data_list["observation"]["head_camera"]:
+    #             # Save alongside main video with suffix
+    #             mask_video_out_path = video_path.replace(".mp4", f"_{arm}_arm_mask.mp4")
+                
+    #             imgs = np.array(data_list["observation"]["head_camera"][mask_key])
+    #             # Ensure it is (N, H, W, 3) for video encoding
+    #             if imgs.ndim == 3: # (N, H, W)
+    #                 imgs = np.stack([imgs]*3, axis=-1)
+                
+    #             images_to_video(imgs, out_path=mask_video_out_path)
+    #             print(f"Saved {arm} arm mask video to {mask_video_out_path}")
+    #     except Exception as e:
+    #         print(f"Could not save {arm} arm mask video: {e}")
+
     with h5py.File(hdf5_path, "w") as f:
         create_hdf5_from_dict(f, data_list)
 

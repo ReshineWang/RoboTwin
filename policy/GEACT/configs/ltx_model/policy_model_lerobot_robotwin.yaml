@@ -30,13 +30,13 @@ pipeline_class: CustomPipeline
 
 # 
 return_action: true
-return_video: false
-train_mode: 'action_only' # 'video_only', 'action_only', 'action_full'
+return_video: true
+train_mode: 'action_full' # 'video_only', 'action_only', 'action_full'
 action_loss_scale: 1.0
 
 # total training step is decided by the minimum of the below two
-train_steps: 15000
-train_epochs: 10000
+train_steps: 10000
+train_epochs: 6000
 steps_to_save: 1000
 steps_to_log: 20
 steps_to_val: 1000
@@ -95,7 +95,7 @@ flow_mode_scale: 1.29
 pixel_wise_timestep: True
 
 diffusion_model:
-  model_path: "/data/dex/Genie-Envisioner/GE_BASE_ROBOTWIN_FINETUNE/2025_12_15_21_20_25/step_7000/diffusion_pytorch_model.safetensors"
+  model_path: "/data/dex/Genie-Envisioner/GE_BASE_ROBOTWIN_FINETUNE/2025_12_14_01_43_18/step_9000/diffusion_pytorch_model.safetensors"
   config:
     activation_fn: gelu-approximate
     attention_bias: true
@@ -126,9 +126,9 @@ data:
     sample_n_frames: 200
     preprocess :  'resize'
     valid_cam :  ['observation.images.cam_high', 'observation.images.cam_left_wrist', 'observation.images.cam_right_wrist']
-    chunk: 140
-    action_chunk: 140
-    n_previous: 1
+    chunk: 9
+    action_chunk: 54
+    n_previous: 4
     previous_pick_mode: 'random'
     random_crop: False
     dataset_info_cache_path: "/data/dex/RoboTwin/data/lerobot_data/huggingface/lerobot/RoboTwin/dataset_meta_info_cache/train"
@@ -143,9 +143,9 @@ data:
     sample_n_frames: 200
     preprocess :  'resize'
     valid_cam :  ['observation.images.cam_high', 'observation.images.cam_left_wrist', 'observation.images.cam_right_wrist']
-    chunk: 140
-    action_chunk: 140
-    n_previous: 1
+    chunk: 9
+    action_chunk: 54
+    n_previous: 4
     previous_pick_mode: 'random'
     random_crop: False
     dataset_info_cache_path: "/data/dex/RoboTwin/data/lerobot_data/huggingface/lerobot/RoboTwin/dataset_meta_info_cache/val"
@@ -161,7 +161,7 @@ noisy_video: true
 load_weights: true
 
 # deepspeed config
-use_deepspeed: true
+use_deepspeed: false
 deepspeed:
   zero_optimization:
     stage: 2

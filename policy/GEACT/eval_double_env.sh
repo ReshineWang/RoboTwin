@@ -6,10 +6,11 @@ task_config=demo_clean
 ckpt_setting=demo_clean
 expert_data_num=50
 seed=42
-gpu_id=0
+gpu_id=1
 policy_conda_env=genie_envisioner
 sim_conda_env=RoboTwin
-port=55560
+port=55551
+execution_step=140
 
 export CUDA_VISIBLE_DEVICES=${gpu_id}
 export GEACT_MODE=double  # 控制双环境推理
@@ -38,12 +39,13 @@ python script/policy_model_server.py \
     --ckpt_setting ${ckpt_setting} \
     --expert_data_num ${expert_data_num} \
     --seed ${seed} \
-    --config /data/dex/RoboTwin/policy/GEACT/configs/ltx_model/policy_model_lerobot.yaml \
-    --weight /data/dex/Genie-Envisioner/GE_ACT_ROBOTWIN_FINETUNE/2025_11_20_17_35_39/step_8000/diffusion_pytorch_model.safetensors \
-    --denoise_step 10 \
+    --config /data/dex/RoboTwin/policy/GEACT/configs/ltx_model/policy_model_lerobot_robotwin.yaml \
+    --weight /data/dex/Genie-Envisioner/GE_ACT_ROBOTWIN_FINETUNE/2025_12_17_04_19_20/step_9000/diffusion_pytorch_model.safetensors \
+    --denoise_step 5 \
     --domain_name RoboTwin \
     --policy_conda_env ${policy_conda_env} \
-    --gpu_id ${gpu_id}&
+    --gpu_id ${gpu_id} \
+    --execution_step ${execution_step}&
 SERVER_PID=$!
 
 # Ensure the server is killed when this script exits
@@ -67,11 +69,12 @@ python script/eval_policy_client.py \
     --ckpt_setting ${ckpt_setting} \
     --expert_data_num ${expert_data_num} \
     --seed ${seed} \
-    --config /data/dex/RoboTwin/policy/GEACT/configs/ltx_model/policy_model_lerobot.yaml \
-    --weight /data/dex/Genie-Envisioner/GE_ACT_ROBOTWIN_FINETUNE/2025_11_20_17_35_39/step_8000/diffusion_pytorch_model.safetensors \
-    --denoise_step 10 \
+    --config /data/dex/RoboTwin/policy/GEACT/configs/ltx_model/policy_model_lerobot_robotwin.yaml \
+    --weight /data/dex/Genie-Envisioner/GE_ACT_ROBOTWIN_FINETUNE/2025_12_17_04_19_20/step_9000/diffusion_pytorch_model.safetensors \
+    --denoise_step 5 \
     --domain_name RoboTwin \
     --policy_conda_env ${policy_conda_env} \
-    --gpu_id ${gpu_id}
+    --gpu_id ${gpu_id} \
+    --execution_step ${execution_step}
 
 echo -e "\033[33m[main] eval_policy_client has finished; the server will be terminated.\033[0m"

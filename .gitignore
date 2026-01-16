@@ -1,6 +1,7 @@
 models/
 data/*
 !data/process_stuck.py
+!data/auto_data.py
 __pycache__/
 **/checkpoints/
 result/
@@ -31,3 +32,5 @@ envs/curobo/*
 
 /*.json*
 /*.txt
+
+lerobot_data/*

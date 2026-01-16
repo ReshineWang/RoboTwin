@@ -116,7 +116,7 @@ def _get_model(usr_args):
     denoise_step = usr_args.get("denoise_step", 5)
     action_dim = usr_args.get("action_dim", 14)  # 兜底
     add_state = True  # GEAct常用带state，若不需要可以改为 usr_args.get("add_state", True)
-    threshold = usr_args.get("threshold", 200)
+    threshold = usr_args.get("threshold", 20)
     domain_name = "RoboTwin"
     return GEActModel(
         config_file=config_file,

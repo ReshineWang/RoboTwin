@@ -1,6 +1,9 @@
 aloha-agilex:
   file_path: "./assets/embodiments/aloha-agilex/"
 
+aloha-vidar:
+  file_path: "./assets/embodiments/aloha-vidar/"
+  
 piper:
   file_path: "./assets/embodiments/piper"
 

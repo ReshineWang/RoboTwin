@@ -35,9 +35,9 @@ def eval(TASK_ENV, model, observation):
     img_arr, state = encode_obs(observation)
     model.call(func_name='update_observation_window', obs=(img_arr, state))
 
-###debug
-    obs=     model.call(func_name='get_observation_window')
-    print(f"Current observation window: {obs}")
+    # ###debug
+    # obs=     model.call(func_name='get_observation_window')
+    # print(f"Current observation window: {obs}")
     # 获取动作（返回未来若干步）
     actions = model.call(func_name='get_action')
     # 如果需要限制步数（与 pi0 一致）

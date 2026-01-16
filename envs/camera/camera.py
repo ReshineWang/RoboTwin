@@ -408,6 +408,39 @@ class Camera:
                 res[camera_name][f"{level}_segmentation"] = _get_segmentation(camera, level=level)
         return res
 
+    # Get Camera Raw Segmentation (IDs)
+    def get_raw_segmentation(self, level="actor") -> dict:
+        
+        def _get_raw_segmentation(camera, level="actor"):
+            seg_labels = camera.get_picture_cuda("Segmentation")  # [H, W, 4]
+            # seg_labels is on CUDA, need to move to CPU for numpy operations if not using torch throughout
+            # Assuming we return numpy array for consistency with other methods
+            seg_labels = seg_labels.torch().cpu().numpy()
+
+            if level == "mesh":
+                label_image = seg_labels[..., 0].astype(int)  # mesh-level
+            elif level == "actor":
+                label_image = seg_labels[..., 1].astype(int)  # actor-level
+            return label_image
+
+        res = {}
+
+        if self.collect_wrist_camera:
+            res["left_camera"] = {}
+            res["right_camera"] = {}
+            res["left_camera"][f"{level}_segmentation"] = _get_raw_segmentation(self.left_camera, level=level)
+            res["right_camera"][f"{level}_segmentation"] = _get_raw_segmentation(self.right_camera, level=level)
+
+        for camera, camera_name in zip(self.static_camera_list, self.static_camera_name):
+            if camera_name == "head_camera":
+                if self.collect_head_camera:
+                    res[camera_name] = {}
+                    res[camera_name][f"{level}_segmentation"] = _get_raw_segmentation(camera, level=level)
+            else:
+                res[camera_name] = {}
+                res[camera_name][f"{level}_segmentation"] = _get_raw_segmentation(camera, level=level)
+        return res
+
     # Get Camera Depth
     def get_depth(self) -> dict:
 
